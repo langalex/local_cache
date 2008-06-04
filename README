@@ -1,0 +1,61 @@
+local_cache
+===========
+
+This plugin extends any cache store configured in rails with a process local in memory cache. It is intended to be a Rails 2.1 replacement for the extended_fragment_cache plugin (http://rubyforge.org/projects/zventstools/) which does essentially the same but doesn't work with the new caching infrastructure in Rails 2.1.
+
+Adding a local cache to the usual remote cache (memcache, file etc.) has two major advantages over the default behaviour (for fragment caching):
+
+* you usually need two cache requests per http request: one in the controller to determine if the cached fragment is still there, one in the view where the fragment is actually rendered - that means the number of cache roundtrips get cut in half
+* the following scenario is avoided: request comes into controller, controller fetches fragment from remote cache, does not assign certain variables as the cache is primed, cache is expired by another process, view gets rendered, cache fragment is deleted - boom
+
+installation
+============
+
+script/plugin install git://github.com/langalex/local_cache.git
+
+the plugin automatically replaces the current cache storage with a proxy that handles the local caching and delegates the rest to the original storage.
+
+usage
+=====
+
+The plugin provides a method in your controller called when_fragment_expired, which takes a key name and a block:
+
+class MyController
+  def index
+    when_fragment_expired 'my_index', 60.minutes do
+      @data = Data.find :all
+    end
+  end
+end
+
+The code in the block only gets executed when the cache returns no data for the given key. In the view you do the normal
+
+<%- cache 'my_index' do -%>
+  <%- @data.each do |data| -%>
+    <%= data.content %>
+  <%- end -%>
+<%- end -%>
+
+This loads the fragment from the local cache and renders it. If the cache returns nil the block gets executed, written to the cache and rendered as ususal in rails. Before every request, the local cache is cleared so no stale data gets into your application.
+
+
+By the way with memcache you can expire your cache fragments by time like this: (this is not part of this plugin but the default behavior)
+
+<%- cache 'my_index', 60.minutes do -%>
+  <%- @data.each do |data| -%>
+    <%= data.content %>
+  <%- end -%>
+<%- end -%>
+
+This will expire the fragmen after 60 minutes.
+
+
+Contact
+=======
+
+Copyright (c) 2008 Alexander Lang, Thilo Utke, released under the MIT license
+
+Contact: 
+
+email: alex[at]upstream-berlin.com, twitter: langalex, blog: http://upstream-berlin.com/blog, skype: langalex
+	     thilo[at]upstream-berlin.com

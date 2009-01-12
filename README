@@ -1,7 +1,7 @@
 local_cache
 ===========
 
-This plugin extends any cache store configured in rails with a process local in memory cache. It is intended to be a Rails 2.1 replacement for the extended_fragment_cache plugin (http://rubyforge.org/projects/zventstools/) which does essentially the same but doesn't work with the new caching infrastructure in Rails 2.1.
+This plugin extends any cache store configured in rails with a process local in memory cache. It is intended to be a Rails 2.2 replacement for the extended_fragment_cache plugin (http://rubyforge.org/projects/zventstools/) which does essentially the same but doesn't work with the new caching infrastructure in Rails >= 2.1.
 
 Adding a local cache to the usual remote cache (memcache, file etc.) has two major advantages over the default behaviour (for fragment caching):
 
@@ -47,7 +47,7 @@ By the way with memcache you can expire your cache fragments by time like this: 
   <%- end -%>
 <%- end -%>
 
-This will expire the fragmen after 60 minutes.
+This will expire the fragment after 60 minutes.
 
 
 Contact

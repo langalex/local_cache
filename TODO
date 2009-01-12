@@ -1,0 +1,12 @@
+
+o local_cahce should be optimized to proxy calls
+  only to read_fragment and write_fragment in
+  actionpack/lib/action_controller/caching/fragments.rb.
+
+  Now it unnecessarily proxies all caching calls when
+  fragment caching is really the only thing that needs
+  the proxy.
+
+o Test cases should include a proper integration test
+  to test controller/view interaction with the proxy.
+
